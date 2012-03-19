@@ -190,10 +190,13 @@ def item_imported(lib, item, config):
         listener_count = None
 
     if genre or playcount or listener_count:
-        log.debug(u'adding last.fm item information; genre: %s, playcount: %s, listener count: %s' % (genre, playcount, listener_count)
-        if genre: item.genre = genre
-        if playcount: item.lastfm_playcount = playcount
-        if listener_count: item.lastfm_listener_count = listener_count
+        log.debug(u'adding last.fm item information; genre: %s, playcount: %s, listener count: %s' % (genre, playcount, listener_count))
+        if genre:
+            item.genre = genre
+        if playcount: 
+            item.lastfm_playcount = playcount
+        if listener_count: 
+            item.lastfm_listener_count = listener_count
         lib.store(item)
         lib.save()
 
