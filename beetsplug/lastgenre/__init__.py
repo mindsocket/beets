@@ -174,11 +174,26 @@ def album_imported(lib, album, config):
 
 @LastGenrePlugin.listen('item_imported')
 def item_imported(lib, item, config):
-    tags = _tags_for(LASTFM.get_track(item.artist, item.title))
+    track = LASTFM.get_track(item.artist, item.title)
+    tags = _tags_for(track)
     genre = _tags_to_genre(tags)
-    if genre:
-        log.debug(u'adding last.fm item genre: %s' % genre)
-        item.genre = genre
+    try:
+        playcount = track.get_playcount()
+    except PYLAST_EXCEPTIONS, exc:
+        log.debug(u'last.fm error: %s' % unicode(exc))
+        playcount = None
+        
+    try:
+        listener_count = track.get_listener_count()
+    except PYLAST_EXCEPTIONS, exc:
+        log.debug(u'last.fm error: %s' % unicode(exc))
+        listener_count = None
+
+    if genre or playcount or listener_count:
+        log.debug(u'adding last.fm item information; genre: %s, playcount: %s, listener count: %s' % (genre, playcount, listener_count)
+        if genre: item.genre = genre
+        if playcount: item.lastfm_playcount = playcount
+        if listener_count: item.lastfm_listener_count = listener_count
         lib.store(item)
         lib.save()
 
